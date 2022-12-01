@@ -1,4 +1,11 @@
-﻿// Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
+﻿const hubConnection = new signalR.HubConnectionBuilder()
+    .withUrl("/meteo")
+    .build();
 
-// Write your JavaScript code.
+hubConnection.start().then(() => {
+    hubConnection.invoke("Get");
+});
+
+hubConnection.on("Receive", function (meteoDto) {
+    alert(meteoDto);
+});
