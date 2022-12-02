@@ -2,10 +2,30 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <title></title>
+    <title>Meteo</title>
+    <link rel="stylesheet" href="lib/bootstrap/css/bootstrap.min.css" />
 </head>
 <body>
-    <p>INDEX!!!</p>
+    <main class="container mt-5 w-25">
+        <div class="mb-3">
+            <label class="form-label" for="temperature">Temperature:</label>
+            <input class="form-control" id="temperature" disabled>
+        </div>
+
+        <div class="mb-3">
+            <label for="humidity">Humidity:</label>
+            <input class="form-control" id="humidity" disabled>
+        </div>
+
+        <div>
+            <label for="rate" class="form-label">Refresh rate:</label>
+            <span id="rateValue"></span>
+            <input type="range" min="1" max="5" step="1" value="1" class="form-range" id="rate">
+        </div>
+    </main>
+
+    <script src="lib/jquery/jquery.min.js"></script>
+    <script src="lib/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="lib/signalr/signalr.min.js"></script>
     <script src="js/main.js"></script>
 </body>

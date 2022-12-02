@@ -6,6 +6,7 @@ public class MeteoHub : Hub
 {
     public async Task Get()
     {
-        await Clients.All.SendAsync("Receive", "25");
+        var random = new Random();
+        await Clients.All.SendAsync("Receive", random.Next(-30, 30));
     }
 }
