@@ -4,23 +4,37 @@
     <meta charset="utf-8" />
     <title>Meteo</title>
     <link rel="stylesheet" href="lib/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-    <main class="container mt-5 w-25">
-        <div class="mb-3">
-            <label class="form-label" for="temperature">Temperature:</label>
-            <input class="form-control" id="temperature" disabled>
+    <main class="container mt-5 col-6 col-sm-6 col-md-4 col-lg-4 col-xl-3">
+        <div class="row mb-3">
+            <div class="col">
+                <label class="form-label" for="temperature">Temperature:</label>
+                <div class="input-group">
+                    <input class="form-control text-center" id="temperature" disabled>
+                    <span class="input-group-text">°C</span>
+                </div>
+            </div>
+            <div class="col">
+                <label class="form-label" for="humidity">Humidity:</label>
+                <div class="input-group">
+                    <input class="form-control text-center" id="humidity" disabled>
+                    <span class="input-group-text">%</span>
+                </div>
+            </div>
         </div>
 
-        <div class="mb-3">
-            <label for="humidity">Humidity:</label>
-            <input class="form-control" id="humidity" disabled>
-        </div>
-
-        <div>
-            <label for="rate" class="form-label">Refresh rate:</label>
-            <span id="rateValue"></span>
-            <input type="range" min="1" max="5" step="1" value="1" class="form-range" id="rate">
+        <div class="row">
+            <div class="col">
+                <label for="rate">Refresh time:</label>
+                <select class="form-control" id="rate">
+                    <option value="500">500 ms</option>
+                    <option value="1000">1000 ms</option>
+                    <option value="1500">1500 ms</option>
+                    <option value="2000">2000 ms</option>
+                </select>
+            </div>
         </div>
     </main>
 

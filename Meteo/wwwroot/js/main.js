@@ -1,22 +1,21 @@
-﻿var rate = 500;
-var rateValue = document.querySelector("#rateValue");
+﻿var rateControl = document.querySelector("#rate");
+var rate = rateControl.value;
 
 document.querySelector("#rate").addEventListener("change", (e) => {
-    rate = e.target.value * 500;
-    rateValue.textContent = rate + " ms";
+    rate = e.target.value;
 });
 
-var temperature = document.querySelector("#temperature");
+var temperatureControl = document.querySelector("#temperature");
 
-const hubConnection = new signalR.HubConnectionBuilder()
+const meteoHubConnection = new signalR.HubConnectionBuilder()
     .withUrl("/meteo")
     .build();
 
-hubConnection.start().then(() => {
-    hubConnection.invoke("Get");
+meteoHubConnection.start().then(() => {
+    meteoHubConnection.invoke("Get");
 });
 
-hubConnection.on("Receive", function (meteoDto) {
-    temperature.value = meteoDto;
-    setTimeout(() => hubConnection.invoke("Get"), rate);
+meteoHubConnection.on("Receive", (meteoDto) => {
+    temperatureControl.value = meteoDto;
+    setTimeout(() => meteoHubConnection.invoke("Get"), rate);
 });
