@@ -6,16 +6,19 @@ document.querySelector("#rate").addEventListener("change", (e) => {
 });
 
 var temperatureControl = document.querySelector("#temperature");
+var humidityControl = document.querySelector("#humidity");
 
-const meteoHubConnection = new signalR.HubConnectionBuilder()
+const meteoHub = new signalR.HubConnectionBuilder()
     .withUrl("/meteo")
     .build();
 
-meteoHubConnection.start().then(() => {
-    meteoHubConnection.invoke("Get");
+meteoHub.start().then(() => {
+    meteoHub.invoke("Get");
 });
 
-meteoHubConnection.on("Receive", (meteoDto) => {
+meteoHub.on("Receive", (meteoDto) => {
     temperatureControl.value = meteoDto;
-    setTimeout(() => meteoHubConnection.invoke("Get"), rate);
+    humidityControl.value = meteoDto;
+
+    setTimeout(() => meteoHub.invoke("Get"), rate);
 });
