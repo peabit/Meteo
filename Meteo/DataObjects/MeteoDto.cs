@@ -1,3 +1,7 @@
 ﻿namespace Meteo.DataObjects;
 
-public record MeteoDto(double Temperature, double Humidity);
+public sealed record MeteoDto
+{
+    public double Temperature { get; init; }
+    public int Humidity { get; init; }
+}

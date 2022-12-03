@@ -4,5 +4,5 @@ namespace Meteo.Services.Interfaces;
 
 public interface IMeteoService
 {
-    MeteoDto Get();
+    MeteoDto? Get();
 }

@@ -1,29 +1,72 @@
 ﻿using System.IO.Ports;
+using System.Text.RegularExpressions;
 using Meteo.DataObjects;
 using Meteo.Services.Interfaces;
+using Meteo.Exceptions;
 
 namespace Meteo.Services
 {
-    public class SerialMeteoService : IMeteoService
+    public sealed class SerialMeteoService : IMeteoService
     {
-        private readonly SerialPort _port;
+        private SerialPort? _port;
+        private readonly string _portName;
+        private readonly int _portSpeed;
 
-        public SerialMeteoService(string portName, int speed)
-            => _port = new SerialPort(portName, speed) { DtrEnable = true };
-
-        public MeteoDto Get()
+        public SerialMeteoService(string portName, int portSpeed)
         {
-            if (!_port.IsOpen)
+            _portName = portName;
+            _portSpeed = portSpeed;
+        }
+
+        public MeteoDto? Get()
+        {
+            string response = string.Empty;
+
+            try
             {
-                _port.Open();
+                if (_port is null)
+                {
+                    _port = new SerialPort(_portName, _portSpeed) { DtrEnable = true };
+                    _port.Open();
+                }
+                else if (!_port.IsOpen)
+                {
+                    _port.Open();
+                }
+
+                _port.WriteLine("get");
+                response = _port.ReadLine();
+            }
+            catch
+            {
+                throw new ReadSensorException();
             }
 
-            _port.WriteLine("GET");
+            var meteo = ParseResponse(response);
 
-            var meteoString = _port.ReadLine();
-            var meteoRaw = meteoString.Split(';');
+            if (meteo is null)
+            {
+                throw new ReadSensorException();
+            }
 
-            return null;
+            return meteo;
+        }
+
+        MeteoDto? ParseResponse(string response)
+        {
+            var responseRegex = new Regex(@"(success|error),(-?\d+),(\d+)\r");
+            var parsedResponse = responseRegex.Match(response);
+
+            if (parsedResponse.Groups[1].Value == "error")
+            {
+                return null;
+            }
+
+            return new MeteoDto
+            {
+                Temperature = Convert.ToDouble((parsedResponse.Groups[2].Value)),
+                Humidity = Convert.ToInt32((parsedResponse.Groups[3].Value))
+            };
         }
     }
 }
