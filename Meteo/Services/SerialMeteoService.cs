@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 using Meteo.DataObjects;
 using Meteo.Services.Interfaces;
 using Meteo.Exceptions;
+using System.Globalization;
 
 namespace Meteo.Services
 {
@@ -54,18 +55,20 @@ namespace Meteo.Services
 
         MeteoDto? ParseResponse(string response)
         {
-            var responseRegex = new Regex(@"(success|error),(-?\d+),(\d+)\r");
+            var responseRegex = new Regex(@"(success|error),(-?\d+\.\d+),(\d+)\r");
             var parsedResponse = responseRegex.Match(response);
 
-            if (parsedResponse.Groups[1].Value == "error")
+            if (!parsedResponse.Success || parsedResponse.Groups[1].Value == "error")
             {
                 return null;
             }
 
+            var pointDoubleFormtInfo = new NumberFormatInfo { NumberDecimalSeparator = "." };
+
             return new MeteoDto
             {
-                Temperature = Convert.ToDouble((parsedResponse.Groups[2].Value)),
-                Humidity = Convert.ToInt32((parsedResponse.Groups[3].Value))
+                Temperature = Convert.ToDouble(parsedResponse.Groups[2].Value, pointDoubleFormtInfo),
+                Humidity = Convert.ToInt32(parsedResponse.Groups[3].Value)
             };
         }
     }
