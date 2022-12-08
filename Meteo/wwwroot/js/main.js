@@ -1,19 +1,10 @@
-﻿var rateControl = document.querySelector("#rate");
-var rate = rateControl.value;
-
-document.querySelector("#rate").addEventListener("change", (e) => {
-    rate = e.target.value;
-});
-
-var messageControl = document.querySelector("#message");
+﻿var messageControl = document.querySelector("#message");
 
 const meteoHub = new signalR.HubConnectionBuilder()
     .withUrl("/meteo")
     .build();
 
 meteoHub.start().then(() => {
-    meteoHub.invoke("Get");
-
     messageControl.textContent = "Connected";
     messageControl.classList.add("alert-success");
 });
@@ -27,16 +18,12 @@ meteoHub.on("ReceiveMeteo", (meteoDto) => {
 
     messageControl.textContent = "Connected";
     messageControl.classList.replace("alert-danger", "alert-success");
-    
-    setTimeout(() => meteoHub.invoke("Get"), rate);
 });
 
-meteoHub.on("ReceiveError", (error) => {
-    messageControl.textContent = "Receive error";
+meteoHub.on("ReceiveError", ( ) => {
+    messageControl.textContent = "Sensor connection error";
     messageControl.classList.replace("alert-success", "alert-danger");
 
     temperatureControl.value = null;
     humidityControl.value = null;
-
-    setTimeout(() => meteoHub.invoke("Get"), rate);
 });

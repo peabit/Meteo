@@ -5,6 +5,7 @@ using Meteo.Services;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSignalR();
 builder.Services.AddSingleton<IMeteoService>( new SerialMeteoService("COM4", 9600 ));
+builder.Services.AddHostedService<SensorListenService>();
 
 var app = builder.Build();
 

@@ -12,6 +12,8 @@ namespace Meteo.Services
         private SerialPort? _port;
         private readonly string _portName;
         private readonly int _portSpeed;
+        private static readonly object _lock = new();
+
 
         public SerialMeteoService(string portName, int portSpeed)
         {
@@ -23,34 +25,37 @@ namespace Meteo.Services
         {
             string response = string.Empty;
 
-            try
+            lock (_lock)
             {
-                if (_port is null)
+                try
                 {
-                    _port = new SerialPort(_portName, _portSpeed) { DtrEnable = true };
-                    _port.Open();
+                    if (_port is null)
+                    {
+                        _port = new SerialPort(_portName, _portSpeed) { DtrEnable = true };
+                        _port.Open();
+                    }
+                    else if (!_port.IsOpen)
+                    {
+                        _port.Open();
+                    }
+
+                    _port.WriteLine("get");
+                    response = _port.ReadLine();
                 }
-                else if (!_port.IsOpen)
+                catch
                 {
-                    _port.Open();
+                    throw new ReadSensorException();
                 }
 
-                _port.WriteLine("get");
-                response = _port.ReadLine();
-            }
-            catch
-            {
-                throw new ReadSensorException();
-            }
+                var meteo = ParseResponse(response);
 
-            var meteo = ParseResponse(response);
+                if (meteo is null)
+                {
+                    throw new ReadSensorException();
+                }
 
-            if (meteo is null)
-            {
-                throw new ReadSensorException();
+                return meteo;
             }
-
-            return meteo;
         }
 
         MeteoDto? ParseResponse(string response)
