@@ -21,7 +21,7 @@ meteoHub.on("ReceiveMeteo", (meteoDto) => {
 });
 
 meteoHub.on("ReceiveError", ( ) => {
-    messageControl.textContent = "Sensor connection error";
+    messageControl.textContent = "Connection error";
     messageControl.classList.replace("alert-success", "alert-danger");
 
     temperatureControl.value = null;

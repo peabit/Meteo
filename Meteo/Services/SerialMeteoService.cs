@@ -60,19 +60,19 @@ namespace Meteo.Services
 
         MeteoDto? ParseResponse(string response)
         {
-            var responseRegex = new Regex(@"(success|error),(-?\d+\.\d+),(\d+)\r");
+            const string successCode = "0";
+
+            var responseRegex = new Regex(@"(\d{1}),(\d{2}),(\d{1,2})\r");
             var parsedResponse = responseRegex.Match(response);
 
-            if (!parsedResponse.Success || parsedResponse.Groups[1].Value == "error")
+            if (!parsedResponse.Success || parsedResponse.Groups[1].Value != successCode)
             {
                 return null;
             }
 
-            var pointDoubleFormtInfo = new NumberFormatInfo { NumberDecimalSeparator = "." };
-
             return new MeteoDto
             {
-                Temperature = Convert.ToDouble(parsedResponse.Groups[2].Value, pointDoubleFormtInfo),
+                Temperature = Convert.ToInt32(parsedResponse.Groups[2].Value),
                 Humidity = Convert.ToInt32(parsedResponse.Groups[3].Value)
             };
         }
