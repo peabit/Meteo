@@ -8,8 +8,6 @@ enum ResponseStatus
   SensorError  
 };
 
-const String command = "get";
-
 // DHT11 sensor on 1 pin
 dht11::DHT11 meteoSensor(1);
 
