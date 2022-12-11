@@ -17,7 +17,7 @@ void setup(){}
 
 void loop() 
 {
-    auto command = SimpleSerial.readLine();
+    auto command = simpleSerial::SimpleSerial.readLine();
 
     if (command.length() == 0) 
     {
@@ -26,24 +26,23 @@ void loop()
     
     if (command != "get") 
     {
-        SimpleSerial.writeLine(ResponseStatus::InvalidCommand);
+        simpleSerial::SimpleSerial.writeLine(ResponseStatus::InvalidCommand);
         return;
     }
 
+    auto readStatus = meteoSensor.read();
+    
+    if (readStatus != dht11::ReadStatus::Success) 
+    {
+      simpleSerial::SimpleSerial.writeLine(ResponseStatus::SensorError);
+      return;
+    }
+    
     auto meteo = meteoSensor.get();
-
-    if (meteoSensor.read() == dht11::ReadStatus::Success) 
-    {
-        auto meteo = meteoSensor.get();
         
-        SimpleSerial.writeLine(
-          String(ResponseStatus::Success) + ',' + 
-          String(meteo.temperature)       + ',' + 
-          String(meteo.humidity)
-        );
-    }
-    else 
-    {
-        SimpleSerial.writeLine(ResponseStatus::SensorError);
-    }
+    simpleSerial::SimpleSerial.writeLine(
+      String(ResponseStatus::Success) + ',' + 
+      String(meteo.temperature)       + ',' + 
+      String(meteo.humidity)
+    );
 }
